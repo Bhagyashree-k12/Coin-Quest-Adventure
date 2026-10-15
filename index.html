@@ -1,0 +1,945 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coin Quest Adventure</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Trebuchet MS", Arial, sans-serif;
+    background: linear-gradient(135deg, #8deaff, #e3c5ff, #fff3a6);
+    min-height: 100vh;
+    color: #28345c;
+    text-align: center;
+    padding: 18px;
+}
+
+header {
+    padding: 12px;
+}
+
+h1 {
+    font-size: clamp(28px, 5vw, 45px);
+    color: #6b35c7;
+    text-shadow: 2px 3px #ffffff;
+}
+
+header p {
+    margin-top: 8px;
+    font-size: 16px;
+}
+
+.game-container {
+    max-width: 850px;
+    margin: 15px auto;
+    background: rgba(255,255,255,0.85);
+    padding: 18px;
+    border-radius: 25px;
+    box-shadow: 0 10px 30px rgba(70, 50, 130, 0.18);
+}
+
+.stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.stat {
+    flex: 1;
+    min-width: 110px;
+    padding: 12px 8px;
+    background: #f0e8ff;
+    border-radius: 14px;
+    font-weight: bold;
+}
+
+.stat span {
+    color: #6b35c7;
+    font-size: 21px;
+}
+
+#game {
+    width: 100%;
+    display: block;
+    background: #b8f5ff;
+    border: 4px solid white;
+    border-radius: 18px;
+    box-shadow: 0 3px 12px #c5c5e5;
+    touch-action: none;
+}
+
+.message {
+    min-height: 28px;
+    margin: 14px 0;
+    font-size: 17px;
+    font-weight: bold;
+    color: #6536b7;
+}
+
+button {
+    border: none;
+    border-radius: 14px;
+    padding: 12px 19px;
+    margin: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.15s, filter 0.15s;
+    touch-action: manipulation;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.05);
+}
+
+button:active {
+    transform: scale(0.95);
+}
+
+.start-btn {
+    background: #713be2;
+    color: white;
+}
+
+.sound-btn {
+    background: #ffe29a;
+    color: #573b00;
+}
+
+.controls {
+    margin-top: 12px;
+}
+
+.controls button {
+    background: #80dfff;
+    width: 62px;
+    height: 52px;
+    font-size: 23px;
+    padding: 5px;
+    box-shadow: 0 4px #51b5d8;
+}
+
+.controls button:active {
+    box-shadow: 0 1px #51b5d8;
+}
+
+.instructions {
+    margin-top: 15px;
+    line-height: 1.8;
+    font-size: 14px;
+    color: #515a7a;
+}
+
+.achievement {
+    margin-top: 14px;
+    padding: 12px;
+    background: #fff4bd;
+    border-radius: 12px;
+    font-weight: bold;
+}
+
+footer {
+    padding: 15px;
+    font-size: 13px;
+}
+
+@media (max-width: 500px) {
+    body {
+        padding: 8px;
+    }
+
+    .game-container {
+        padding: 10px;
+    }
+
+    .stat {
+        min-width: 90px;
+    }
+
+    button {
+        padding: 11px 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🪙 Coin Quest Adventure 🌈</h1>
+    <p>Explore the magical world, collect treasures and become a hero!</p>
+</header>
+
+<main class="game-container">
+
+    <div class="stats">
+        <div class="stat">🪙 Coins<br><span id="coins">0</span></div>
+        <div class="stat">💎 Diamonds<br><span id="diamonds">0</span></div>
+        <div class="stat">⭐ Stars<br><span id="stars">0</span></div>
+        <div class="stat">❤️ Lives<br><span id="lives">3</span></div>
+        <div class="stat">🏆 Best<br><span id="best">0</span></div>
+    </div>
+
+    <canvas id="game" width="800" height="440">
+        Your browser does not support the HTML canvas.
+    </canvas>
+
+    <div class="message" id="message">
+        Press START GAME to begin your adventure!
+    </div>
+
+    <button class="start-btn" id="startBtn">▶ START GAME</button>
+    <button class="sound-btn" id="soundBtn">🔊 Sound ON</button>
+
+    <div class="controls">
+        <div>
+            <button data-key="ArrowUp" aria-label="Move up">⬆️</button>
+        </div>
+        <div>
+            <button data-key="ArrowLeft" aria-label="Move left">⬅️</button>
+            <button data-key="ArrowDown" aria-label="Move down">⬇️</button>
+            <button data-key="ArrowRight" aria-label="Move right">➡️</button>
+        </div>
+    </div>
+
+    <div class="instructions">
+        <b>How to play:</b><br>
+        ⌨️ Use keyboard arrow keys or the buttons above to move.<br>
+        🪙 Coins = 10 points &nbsp; | &nbsp; 💎 Diamonds = 50 points<br>
+        ⭐ Stars = 25 points &nbsp; | &nbsp; 🟣 Purple monsters cost one life.<br>
+        🎯 Collect treasures and avoid the monsters!
+    </div>
+
+    <div class="achievement" id="achievement">
+        🎖️ Achievement: Adventure Beginner
+    </div>
+
+</main>
+
+<footer>
+    Made with 💜 for curious little explorers!
+</footer>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+const coinsEl = document.getElementById("coins");
+const diamondsEl = document.getElementById("diamonds");
+const starsEl = document.getElementById("stars");
+const livesEl = document.getElementById("lives");
+const bestEl = document.getElementById("best");
+const messageEl = document.getElementById("message");
+const achievementEl = document.getElementById("achievement");
+const startBtn = document.getElementById("startBtn");
+const soundBtn = document.getElementById("soundBtn");
+
+const W = canvas.width;
+const H = canvas.height;
+
+let player;
+let coins = [];
+let diamonds = [];
+let stars = [];
+let monsters = [];
+let particles = [];
+
+let score = 0;
+let coinCount = 0;
+let diamondCount = 0;
+let starCount = 0;
+let lives = 3;
+
+let running = false;
+let soundOn = true;
+let audioContext = null;
+let lastTime = 0;
+let elapsed = 0;
+let spawnTimer = 0;
+let animationId = null;
+
+const keys = {};
+
+let bestScore = 0;
+
+try {
+    bestScore = Number(localStorage.getItem("coinQuestBest")) || 0;
+} catch (error) {
+    bestScore = 0;
+}
+
+bestEl.textContent = bestScore;
+
+const random = (min, max) =>
+    Math.random() * (max - min) + min;
+
+function playSound(frequency = 600, duration = 0.1) {
+    if (!soundOn) return;
+
+    try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!AudioCtx) return;
+
+        if (!audioContext) audioContext = new AudioCtx();
+
+        if (audioContext.state === "suspended") {
+            audioContext.resume();
+        }
+
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.value = frequency;
+        gain.gain.value = 0.08;
+
+        oscillator.connect(gain);
+        gain.connect(audioContext.destination);
+
+        oscillator.start();
+        gain.gain.exponentialRampToValueAtTime(
+            0.001,
+            audioContext.currentTime + duration
+        );
+        oscillator.stop(audioContext.currentTime + duration);
+    } catch (error) {
+        // The game still works if audio is unavailable.
+    }
+}
+
+function resetGame() {
+    player = {
+        x: 75,
+        y: H / 2,
+        r: 17,
+        speed: 235,
+        invulnerable: 0
+    };
+
+    coins = [];
+    diamonds = [];
+    stars = [];
+    monsters = [];
+    particles = [];
+
+    score = 0;
+    coinCount = 0;
+    diamondCount = 0;
+    starCount = 0;
+    lives = 3;
+
+    elapsed = 0;
+    spawnTimer = 0;
+    lastTime = 0;
+
+    for (let i = 0; i < 7; i++) {
+        spawnCoin(200 + i * 80, random(50, H - 50));
+    }
+
+    for (let i = 0; i < 2; i++) {
+        spawnDiamond(random(280, W - 40), random(50, H - 50));
+    }
+
+    spawnStar(random(350, W - 40), random(50, H - 50));
+
+    updateStats();
+
+    messageEl.textContent = "Adventure started! Collect the treasures!";
+    achievementEl.textContent = "🎖️ Achievement: Adventure Beginner";
+}
+
+function spawnCoin(x, y) {
+    coins.push({
+        x: x ?? random(100, W - 25),
+        y: y ?? random(35, H - 35),
+        r: 11,
+        phase: random(0, Math.PI * 2)
+    });
+}
+
+function spawnDiamond(x, y) {
+    diamonds.push({
+        x: x ?? random(100, W - 25),
+        y: y ?? random(35, H - 35),
+        r: 13,
+        phase: random(0, Math.PI * 2)
+    });
+}
+
+function spawnStar(x, y) {
+    stars.push({
+        x: x ?? random(100, W - 25),
+        y: y ?? random(35, H - 35),
+        r: 14,
+        phase: random(0, Math.PI * 2)
+    });
+}
+
+function spawnMonster() {
+    monsters.push({
+        x: W + 25,
+        y: random(35, H - 35),
+        r: 16,
+        speed: random(85, 125) + Math.min(elapsed * 1.5, 90),
+        phase: random(0, Math.PI * 2)
+    });
+}
+
+function updateStats() {
+    coinsEl.textContent = coinCount;
+    diamondsEl.textContent = diamondCount;
+    starsEl.textContent = starCount;
+    livesEl.textContent = lives;
+    bestEl.textContent = bestScore;
+}
+
+function updateAchievement() {
+    if (score >= 500) {
+        achievementEl.textContent = "👑 Achievement: Treasure Champion!";
+    } else if (score >= 200) {
+        achievementEl.textContent = "💎 Achievement: Diamond Hunter!";
+    } else if (score >= 100) {
+        achievementEl.textContent = "⭐ Achievement: Super Explorer!";
+    } else if (score >= 50) {
+        achievementEl.textContent = "🥉 Achievement: Coin Collector!";
+    } else {
+        achievementEl.textContent = "🎖️ Achievement: Adventure Beginner";
+    }
+}
+
+function addParticles(x, y, symbol) {
+    particles.push({
+        x,
+        y,
+        symbol,
+        life: 0.8,
+        maxLife: 0.8,
+        vy: -45
+    });
+}
+
+function distance(a, b) {
+    return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function collectItems(items, type, points) {
+    for (let i = items.length - 1; i >= 0; i--) {
+        const item = items[i];
+
+        if (distance(player, item) < player.r + item.r) {
+            items.splice(i, 1);
+            score += points;
+
+            if (type === "coin") {
+                coinCount++;
+                messageEl.textContent = "🪙 Great! You collected a coin!";
+                playSound(650, 0.1);
+            } else if (type === "diamond") {
+                diamondCount++;
+                messageEl.textContent = "💎 Amazing! Bonus diamond!";
+                playSound(900, 0.18);
+            } else {
+                starCount++;
+                messageEl.textContent = "⭐ Wonderful! A magical star!";
+                playSound(1050, 0.2);
+            }
+
+            addParticles(item.x, item.y, type === "coin" ? "+10" :
+                type === "diamond" ? "+50" : "+25");
+
+            if (items === coins) spawnCoin();
+            if (items === diamonds) spawnDiamond();
+            if (items === stars) spawnStar();
+
+            updateStats();
+            updateAchievement();
+        }
+    }
+}
+
+function update(dt) {
+    elapsed += dt;
+
+    let dx = 0;
+    let dy = 0;
+
+    if (keys.ArrowLeft || keys.a || keys.A) dx--;
+    if (keys.ArrowRight || keys.d || keys.D) dx++;
+    if (keys.ArrowUp || keys.w || keys.W) dy--;
+    if (keys.ArrowDown || keys.s || keys.S) dy++;
+
+    if (dx !== 0 || dy !== 0) {
+        const length = Math.hypot(dx, dy);
+        player.x += (dx / length) * player.speed * dt;
+        player.y += (dy / length) * player.speed * dt;
+    }
+
+    player.x = Math.max(player.r, Math.min(W - player.r, player.x));
+    player.y = Math.max(player.r, Math.min(H - player.r, player.y));
+
+    player.invulnerable = Math.max(0, player.invulnerable - dt);
+
+    coins.forEach(item => item.phase += dt * 3);
+    diamonds.forEach(item => item.phase += dt * 4);
+    stars.forEach(item => item.phase += dt * 4);
+
+    collectItems(coins, "coin", 10);
+    collectItems(diamonds, "diamond", 50);
+    collectItems(stars, "star", 25);
+
+    spawnTimer += dt;
+
+    if (spawnTimer > Math.max(0.85, 2.5 - elapsed * 0.025)) {
+        spawnTimer = 0;
+        spawnMonster();
+    }
+
+    for (let i = monsters.length - 1; i >= 0; i--) {
+        const monster = monsters[i];
+
+        monster.x -= monster.speed * dt;
+        monster.phase += dt * 5;
+        monster.y += Math.sin(monster.phase) * 18 * dt;
+
+        if (monster.x < -30) {
+            monsters.splice(i, 1);
+            continue;
+        }
+
+        if (
+            player.invulnerable <= 0 &&
+            distance(player, monster) < player.r + monster.r - 3
+        ) {
+            monsters.splice(i, 1);
+            lives--;
+            player.invulnerable = 1.3;
+
+            messageEl.textContent = lives > 0
+                ? "🟣 Oops! You lost a life. Keep going!"
+                : "Game over! Press PLAY AGAIN to try once more.";
+
+            playSound(180, 0.25);
+            addParticles(player.x, player.y, "✨");
+            updateStats();
+
+            if (lives <= 0) {
+                endGame();
+                return;
+            }
+        }
+    }
+
+    for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.y += p.vy * dt;
+        p.life -= dt;
+
+        if (p.life <= 0) particles.splice(i, 1);
+    }
+}
+
+function drawBackground() {
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#8deaff");
+    sky.addColorStop(1, "#d8f9ff");
+
+    ctx.fillStyle = sky;
+    ctx.fillRect(0, 0, W, H);
+
+    // Floating clouds
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+
+    for (let i = 0; i < 5; i++) {
+        const x = ((i * 190 - elapsed * 9) % (W + 120) + W + 120)
+            % (W + 120) - 50;
+        const y = 45 + (i % 3) * 40;
+
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.arc(x + 24, y - 8, 25, 0, Math.PI * 2);
+        ctx.arc(x + 50, y, 19, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    // Rolling green hills
+    ctx.fillStyle = "#a3efaa";
+    ctx.beginPath();
+    ctx.moveTo(0, H);
+    ctx.lineTo(0, H - 70);
+
+    for (let x = 0; x <= W; x += 10) {
+        ctx.lineTo(
+            x,
+            H - 70 + Math.sin(x * 0.018 + elapsed * 0.35) * 22
+        );
+    }
+
+    ctx.lineTo(W, H);
+    ctx.closePath();
+    ctx.fill();
+
+    // Tiny flowers
+    for (let i = 0; i < 24; i++) {
+        const x = (i * 47 + 20) % W;
+        const y = H - 22 - (i % 3) * 7;
+
+        ctx.fillStyle = ["#ff79c6", "#ffffff", "#ffe16b"][i % 3];
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function drawCoin(item) {
+    const y = item.y + Math.sin(item.phase) * 3;
+
+    ctx.save();
+    ctx.translate(item.x, y);
+    ctx.rotate(Math.sin(item.phase) * 0.12);
+
+    ctx.fillStyle = "#e99b00";
+    ctx.beginPath();
+    ctx.arc(2, 2, item.r + 1, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#ffd83d";
+    ctx.beginPath();
+    ctx.arc(0, 0, item.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.strokeStyle = "#fff3a0";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.arc(0, 0, item.r - 3, 0, Math.PI * 2);
+    ctx.stroke();
+
+    ctx.fillStyle = "#a76b00";
+    ctx.font = "bold 15px Arial";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("$", 0, 1);
+
+    ctx.restore();
+}
+
+function drawDiamond(item) {
+    const y = item.y + Math.sin(item.phase) * 4;
+
+    ctx.save();
+    ctx.translate(item.x, y);
+    ctx.rotate(Math.sin(item.phase) * 0.15);
+
+    ctx.beginPath();
+    ctx.moveTo(0, -item.r);
+    ctx.lineTo(item.r, -3);
+    ctx.lineTo(0, item.r);
+    ctx.lineTo(-item.r, -3);
+    ctx.closePath();
+
+    const gradient = ctx.createLinearGradient(-12, -12, 12, 12);
+    gradient.addColorStop(0, "#ff9cff");
+    gradient.addColorStop(1, "#7739ef");
+
+    ctx.fillStyle = gradient;
+    ctx.fill();
+
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawStar(item) {
+    const y = item.y + Math.sin(item.phase) * 4;
+
+    ctx.save();
+    ctx.translate(item.x, y);
+    ctx.rotate(item.phase * 0.4);
+
+    ctx.beginPath();
+
+    for (let i = 0; i < 10; i++) {
+        const radius = i % 2 === 0 ? item.r : item.r * 0.45;
+        const angle = i * Math.PI / 5 - Math.PI / 2;
+
+        const x = Math.cos(angle) * radius;
+        const yy = Math.sin(angle) * radius;
+
+        if (i === 0) ctx.moveTo(x, yy);
+        else ctx.lineTo(x, yy);
+    }
+
+    ctx.closePath();
+    ctx.fillStyle = "#ffb928";
+    ctx.fill();
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawPlayer() {
+    if (player.invulnerable > 0 && Math.floor(elapsed * 12) % 2 === 0) {
+        return;
+    }
+
+    ctx.save();
+    ctx.translate(player.x, player.y);
+
+    // Magical glow
+    ctx.shadowColor = "#ff88ce";
+    ctx.shadowBlur = 15;
+
+    // Frog body
+    ctx.fillStyle = "#46d987";
+    ctx.beginPath();
+    ctx.arc(0, 2, player.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.shadowBlur = 0;
+
+    // Eyes
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(-7, -10, 7, 0, Math.PI * 2);
+    ctx.arc(7, -10, 7, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#26355e";
+    ctx.beginPath();
+    ctx.arc(-6, -10, 3, 0, Math.PI * 2);
+    ctx.arc(8, -10, 3, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Smile
+    ctx.strokeStyle = "#174f42";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 3, 8, 0.2, Math.PI - 0.2);
+    ctx.stroke();
+
+    // Little feet
+    ctx.fillStyle = "#23b96d";
+    ctx.beginPath();
+    ctx.ellipse(-10, 15, 7, 4, -0.3, 0, Math.PI * 2);
+    ctx.ellipse(10, 15, 7, 4, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore();
+}
+
+function drawMonster(monster) {
+    ctx.save();
+    ctx.translate(monster.x, monster.y);
+
+    ctx.fillStyle = "#b95aff";
+    ctx.beginPath();
+    ctx.arc(0, 0, monster.r, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Spikes
+    ctx.fillStyle = "#8b35dc";
+
+    for (let i = 0; i < 5; i++) {
+        const x = -12 + i * 6;
+        ctx.beginPath();
+        ctx.moveTo(x, -10);
+        ctx.lineTo(x + 3, -19);
+        ctx.lineTo(x + 6, -10);
+        ctx.fill();
+    }
+
+    // Eyes
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.arc(-6, -3, 5, 0, Math.PI * 2);
+    ctx.arc(6, -3, 5, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "#39204f";
+    ctx.beginPath();
+    ctx.arc(-5, -2, 2, 0, Math.PI * 2);
+    ctx.arc(7, -2, 2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Friendly-looking frown
+    ctx.strokeStyle = "#64258e";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(0, 8, 6, Math.PI + 0.3, Math.PI * 2 - 0.3);
+    ctx.stroke();
+
+    ctx.restore();
+}
+
+function drawParticles() {
+    for (const p of particles) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life / p.maxLife);
+        ctx.fillStyle = "#6d35ce";
+        ctx.font = "bold 17px Arial";
+        ctx.textAlign = "center";
+        ctx.fillText(p.symbol, p.x, p.y);
+        ctx.restore();
+    }
+}
+
+function draw() {
+    drawBackground();
+
+    coins.forEach(drawCoin);
+    diamonds.forEach(drawDiamond);
+    stars.forEach(drawStar);
+    monsters.forEach(drawMonster);
+
+    if (player) drawPlayer();
+
+    drawParticles();
+
+    if (!running) {
+        ctx.fillStyle = "rgba(255,255,255,0.48)";
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.fillStyle = "#6635bd";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.font = "bold 35px Trebuchet MS";
+        ctx.fillText(
+            lives <= 0 ? "GAME OVER!" : "READY, EXPLORER?",
+            W / 2,
+            H / 2 - 18
+        );
+
+        ctx.font = "20px Trebuchet MS";
+        ctx.fillText(
+            lives <= 0 ? "Try again and beat your best score!" :
+            "Collect treasures and have fun!",
+            W / 2,
+            H / 2 + 23
+        );
+    }
+}
+
+function gameLoop(timestamp) {
+    if (!running) return;
+
+    if (!lastTime) lastTime = timestamp;
+
+    const dt = Math.min((timestamp - lastTime) / 1000, 0.04);
+    lastTime = timestamp;
+
+    update(dt);
+    draw();
+
+    if (running) {
+        animationId = requestAnimationFrame(gameLoop);
+    }
+}
+
+function startGame() {
+    if (running) return;
+
+    resetGame();
+    running = true;
+
+    startBtn.textContent = "🎮 GAME RUNNING";
+    startBtn.disabled = true;
+
+    playSound(700, 0.12);
+    animationId = requestAnimationFrame(gameLoop);
+}
+
+function endGame() {
+    running = false;
+
+    if (score > bestScore) {
+        bestScore = score;
+
+        try {
+            localStorage.setItem("coinQuestBest", bestScore);
+        } catch (error) {
+            // Saving the best score is optional.
+        }
+    }
+
+    updateStats();
+
+    messageEl.textContent =
+        `🏆 Adventure finished! Final score: ${score} points!`;
+
+    startBtn.textContent = "🔄 PLAY AGAIN";
+    startBtn.disabled = false;
+
+    draw();
+}
+
+startBtn.addEventListener("click", startGame);
+
+soundBtn.addEventListener("click", () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? "🔊 Sound ON" : "🔇 Sound OFF";
+
+    if (soundOn) playSound(600, 0.1);
+});
+
+document.addEventListener("keydown", event => {
+    const allowedKeys = [
+        "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight",
+        " "
+    ];
+
+    if (allowedKeys.includes(event.key)) {
+        event.preventDefault();
+    }
+
+    keys[event.key] = true;
+});
+
+document.addEventListener("keyup", event => {
+    keys[event.key] = false;
+});
+
+document.querySelectorAll("[data-key]").forEach(button => {
+    const key = button.dataset.key;
+
+    button.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        keys[key] = true;
+        button.setPointerCapture(event.pointerId);
+    });
+
+    function releaseKey(event) {
+        event.preventDefault();
+        keys[key] = false;
+    }
+
+    button.addEventListener("pointerup", releaseKey);
+    button.addEventListener("pointercancel", releaseKey);
+    button.addEventListener("lostpointercapture", () => {
+        keys[key] = false;
+    });
+});
+
+// Show the game screen before the first round.
+resetGame();
+running = false;
+draw();
+</script>
+
+</body>
+</html>
+
